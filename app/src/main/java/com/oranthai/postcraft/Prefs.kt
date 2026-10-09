@@ -9,10 +9,6 @@ class Prefs(context: Context) {
         get() = sp.getString("gemini_key", "") ?: ""
         set(v) = sp.edit().putString("gemini_key", v.trim()).apply()
 
-    var imageModel: String
-        get() = sp.getString("image_model", null)?.takeIf { it.isNotBlank() } ?: DEFAULT_IMAGE_MODEL
-        set(v) = sp.edit().putString("image_model", v.trim()).apply()
-
     var textModel: String
         get() = sp.getString("text_model", null)?.takeIf { it.isNotBlank() } ?: DEFAULT_TEXT_MODEL
         set(v) = sp.edit().putString("text_model", v.trim()).apply()
@@ -41,7 +37,6 @@ class Prefs(context: Context) {
     val directReady get() = igUserId.isNotBlank() && igToken.isNotBlank() && imgbbKey.isNotBlank()
 
     companion object {
-        const val DEFAULT_IMAGE_MODEL = "gemini-2.5-flash-image"
         const val DEFAULT_TEXT_MODEL = "gemini-2.5-flash"
     }
 }

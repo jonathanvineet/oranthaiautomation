@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 object Images {
-    /** Long edge we send to the model - plenty for restyling, keeps uploads fast. */
+    /** Long edge we keep from the source - plenty for a 1080px post, keeps memory and uploads small. */
     private const val MAX_EDGE = 1536
 
     fun fromUri(context: Context, uri: Uri): ByteArray =
@@ -40,14 +40,6 @@ object Images {
 
     fun toJpeg(bitmap: Bitmap, quality: Int = 92): ByteArray =
         ByteArrayOutputStream().also { bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()
-
-    /** Re-encodes model output (often PNG) as JPEG, which Instagram handles best. */
-    fun normalize(bytes: ByteArray): Pair<ByteArray, Bitmap> {
-        val bmp = ImageDecoder.decodeBitmap(ImageDecoder.createSource(ByteBuffer.wrap(bytes))) { d, _, _ ->
-            d.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
-        }
-        return toJpeg(bmp, 95) to bmp
-    }
 
     fun decode(bytes: ByteArray): Bitmap =
         ImageDecoder.decodeBitmap(ImageDecoder.createSource(ByteBuffer.wrap(bytes))) { d, _, _ ->

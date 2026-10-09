@@ -19,7 +19,6 @@ import com.oranthai.postcraft.Prefs
 @Composable
 fun SettingsScreen(prefs: Prefs, onClose: () -> Unit) {
     var geminiKey by remember { mutableStateOf(prefs.geminiKey) }
-    var imageModel by remember { mutableStateOf(prefs.imageModel) }
     var textModel by remember { mutableStateOf(prefs.textModel) }
     var brand by remember { mutableStateOf(prefs.brand) }
     var direct by remember { mutableStateOf(prefs.directPublish) }
@@ -30,7 +29,6 @@ fun SettingsScreen(prefs: Prefs, onClose: () -> Unit) {
 
     fun save() {
         prefs.geminiKey = geminiKey
-        prefs.imageModel = imageModel
         prefs.textModel = textModel
         prefs.brand = brand
         prefs.directPublish = direct
@@ -56,12 +54,11 @@ fun SettingsScreen(prefs: Prefs, onClose: () -> Unit) {
             Modifier.padding(pad).fillMaxSize().imePadding().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Section("AI (Google Gemini)")
-            Text("Free key from Google AI Studio. Image generation may need billing enabled on the key's project.",
+            Section("AI captions (Google Gemini)")
+            Text("Free key from Google AI Studio, used to write captions. Photo styles run on your phone and need no key.",
                 style = MaterialTheme.typography.bodySmall)
             TextButton(onClick = { uri.openUri("https://aistudio.google.com/apikey") }) { Text("Get a Gemini API key ↗") }
             Secret("Gemini API key", geminiKey) { geminiKey = it }
-            Field("Image model", imageModel) { imageModel = it }
             Field("Caption model", textModel) { textModel = it }
 
             Section("Your account")

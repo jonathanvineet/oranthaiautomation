@@ -7,31 +7,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Minimal Gemini REST client (generateContent) for image restyling and captions. */
+/** Minimal Gemini REST client (generateContent) for captions. */
 class Gemini(private val apiKey: String) {
 
     data class Caption(val caption: String, val hashtags: List<String>) {
         fun full() = if (hashtags.isEmpty()) caption
         else caption + "\n\n" + hashtags.joinToString(" ") { if (it.startsWith("#")) it else "#$it" }
-    }
-
-    /** Sends [jpeg] plus [prompt] to the image model and returns the generated image bytes. */
-    fun generateImage(model: String, jpeg: ByteArray, prompt: String, aspectRatio: String): ByteArray {
-        val body = JSONObject()
-            .put("contents", JSONArray().put(JSONObject().put("parts", JSONArray()
-                .put(imagePart(jpeg))
-                .put(JSONObject().put("text", prompt)))))
-            .put("generationConfig", JSONObject()
-                .put("responseModalities", JSONArray().put("TEXT").put("IMAGE"))
-                .put("imageConfig", JSONObject().put("aspectRatio", aspectRatio)))
-
-        val parts = generate(model, body)
-        for (i in 0 until parts.length()) {
-            val p = parts.getJSONObject(i)
-            val inline = p.optJSONObject("inlineData") ?: p.optJSONObject("inline_data") ?: continue
-            return Base64.decode(inline.getString("data"), Base64.DEFAULT)
-        }
-        throw ApiException("Model returned no image. " + textOf(parts).ifBlank { "Try another style or photo." })
     }
 
     fun generateCaption(model: String, jpeg: ByteArray, instructions: String): Caption {

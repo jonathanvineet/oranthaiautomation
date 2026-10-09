@@ -1,14 +1,14 @@
 # PostCraft
 
-Native Android app (Kotlin + Jetpack Compose, no Expo): share a photo to it, get AI-restyled Instagram posts with captions, post with one tap.
+Native Android app (Kotlin + Jetpack Compose, no Expo): share a photo to it, get styled Instagram posts with AI captions, post with one tap. Free: photo styles run on the phone; captions use Gemini's free text tier.
 
 ## Flow
 1. Google Photos / Gallery / Google app → **Share** → **PostCraft** (shared image links work too).
-2. Pick aesthetic, post type, caption tone, format and number of variations → **Generate post**.
+2. Pick a look, caption tone, format and number of variations → **Generate post**.
 3. Pick your favourite variation, edit the caption → **Post to Instagram**.
 
 ## Setup on the phone
-- Settings → paste a Gemini API key (https://aistudio.google.com/apikey). Image generation may need billing on that Google project.
+- Settings → paste a free Gemini API key (https://aistudio.google.com/apikey) for captions. Looks are colour grades applied on the phone (`Filters.kt`), so they need no key or billing.
 - Optional **Direct publish** (posts with zero further taps): needs an Instagram Business/Creator account,
   Instagram user ID + long-lived access token from a Meta app with the Instagram API, and a free imgbb key
   (Instagram's API only accepts public image URLs; uploads expire after 1 hour).

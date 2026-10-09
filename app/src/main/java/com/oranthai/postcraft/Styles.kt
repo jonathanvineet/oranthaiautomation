@@ -4,31 +4,22 @@ package com.oranthai.postcraft
 data class Choice(val label: String, val prompt: String)
 
 object Styles {
+    /** Free on-device looks - see [Filters]. */
     val aesthetics = listOf(
-        Choice("Cinematic", "cinematic movie still, anamorphic lens look, teal-and-orange grade, dramatic lighting, shallow depth of field"),
-        Choice("35mm Film", "shot on 35mm Kodak Portra film, natural grain, soft highlights, warm nostalgic tones"),
-        Choice("Clean Minimal", "clean minimal aesthetic, lots of negative space, soft neutral palette, bright even light, airy and modern"),
-        Choice("Moody Dark", "moody dark aesthetic, deep shadows, desaturated low-key tones, rich blacks, atmospheric"),
-        Choice("Pastel Dream", "dreamy pastel aesthetic, soft pinks lilacs and mint, hazy glow, light and whimsical"),
-        Choice("Golden Hour", "warm golden hour sunlight, long soft shadows, glowing rim light, sun flare"),
-        Choice("Vintage 70s", "1970s vintage photo, faded warm colors, retro textures, slight vignette"),
-        Choice("Luxury Editorial", "high-end luxury fashion editorial, glossy magazine lighting, rich contrast, elegant and premium"),
-        Choice("Neon Cyberpunk", "neon cyberpunk night aesthetic, magenta and cyan neon glow, reflections, futuristic city vibe"),
-        Choice("Anime Art", "hand-painted anime illustration style, vibrant colors, soft cel shading, painterly background"),
-        Choice("Watercolor", "delicate watercolor painting, soft bleeding edges, paper texture, gentle colors"),
-        Choice("Y2K Flash", "Y2K party aesthetic, direct on-camera flash, high saturation, glossy, playful"),
-        Choice("Polaroid", "instant polaroid photo look, slightly washed colors, soft focus, with the white polaroid frame"),
-        Choice("B&W Classic", "timeless black and white photography, strong contrast, fine grain, classic portrait feel"),
-    )
-
-    val postTypes = listOf(
-        Choice("Photo", "Keep it a pure photograph-style image with no added text."),
-        Choice("Quote Post", "Add a short, elegant, relevant quote as tasteful typography integrated into the image, perfectly spelled."),
-        Choice("Product Ad", "Turn it into a polished product advertisement: hero the main subject, clean studio-quality backdrop, premium lighting, room for a brand feel. No fake logos."),
-        Choice("Magazine Cover", "Design it as a stylish magazine cover with a bold masthead title and a couple of short cover lines, perfectly spelled."),
-        Choice("Announcement", "Make it an eye-catching announcement graphic with a short bold headline integrated into the design, perfectly spelled."),
-        Choice("Moodboard", "Make it an aesthetic moodboard collage built around the subject, with complementary textures, colors and details."),
-        Choice("Meme", "Make it a funny, clean meme with short bold caption text at the top, perfectly spelled."),
+        Look("Natural Boost", saturation = 1.15f, contrast = 1.08f, brightness = 4f),
+        Look("35mm Film", saturation = 0.9f, contrast = 1.05f, warmth = 0.6f, fade = 0.5f, vignette = 0.25f, grain = 0.5f),
+        Look("Cinematic", saturation = 0.9f, contrast = 1.15f, warmth = 0.3f, tint = 0xFF1E6F7A.toInt(), tintAlpha = 0.18f, vignette = 0.3f),
+        Look("Clean Minimal", saturation = 0.85f, contrast = 0.95f, brightness = 18f, fade = 0.2f),
+        Look("Moody Dark", saturation = 0.7f, contrast = 1.2f, brightness = -18f, vignette = 0.55f),
+        Look("Pastel Dream", saturation = 0.75f, contrast = 0.9f, brightness = 20f, tint = 0xFFF4C2D7.toInt(), tintAlpha = 0.2f, fade = 0.35f),
+        Look("Golden Hour", saturation = 1.1f, warmth = 1.2f, tint = 0xFFFFB347.toInt(), tintAlpha = 0.15f, vignette = 0.2f),
+        Look("Vintage 70s", saturation = 0.8f, warmth = 0.9f, tint = 0xFFD9A066.toInt(), tintAlpha = 0.15f, fade = 0.6f, vignette = 0.35f, grain = 0.35f),
+        Look("Luxury Editorial", saturation = 0.95f, contrast = 1.22f, vignette = 0.3f),
+        Look("Neon Night", saturation = 1.35f, contrast = 1.15f, tint = 0xFFB026FF.toInt(), tintAlpha = 0.16f, vignette = 0.35f),
+        Look("Y2K Flash", saturation = 1.4f, contrast = 1.2f, brightness = 10f),
+        Look("Polaroid", saturation = 0.9f, warmth = 0.3f, fade = 0.35f, polaroid = true),
+        Look("B&W Classic", saturation = 0f, contrast = 1.25f, grain = 0.4f),
+        Look("B&W Soft", saturation = 0f, contrast = 0.95f, fade = 0.4f),
     )
 
     val tones = listOf(
@@ -41,7 +32,7 @@ object Styles {
         Choice("Storytelling", "a short engaging story behind the moment, ending with a question to drive comments"),
     )
 
-    /** Instagram-friendly aspect ratios supported by the image model. */
+    /** Instagram-friendly aspect ratios. */
     val ratios = listOf(
         Choice("Portrait 4:5", "4:5"),
         Choice("Square 1:1", "1:1"),

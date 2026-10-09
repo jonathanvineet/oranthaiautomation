@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.oranthai.postcraft.Choice
+import com.oranthai.postcraft.Look
 import com.oranthai.postcraft.StudioViewModel
 import com.oranthai.postcraft.Styles
 
@@ -63,16 +64,15 @@ fun StudioScreen(vm: StudioViewModel, onSettings: () -> Unit) {
                     onClick = onSettings,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                 ) {
-                    Text("Tap here to add your Gemini API key and get started.", Modifier.padding(14.dp))
+                    Text("Tap here to add a free Gemini API key for AI captions.", Modifier.padding(14.dp))
                 }
             }
 
             SourceCard(vm, pickPhoto)
 
-            OptionRow("Aesthetic", Styles.aesthetics, vm.aesthetic) { vm.aesthetic = it }
-            OptionRow("Post type", Styles.postTypes, vm.postType) { vm.postType = it }
-            OptionRow("Caption tone", Styles.tones, vm.tone) { vm.tone = it }
-            OptionRow("Format", Styles.ratios, vm.ratio) { vm.ratio = it }
+            OptionRow("Look", Styles.aesthetics, vm.aesthetic, Look::label) { vm.aesthetic = it }
+            OptionRow("Caption tone", Styles.tones, vm.tone, Choice::label) { vm.tone = it }
+            OptionRow("Format", Styles.ratios, vm.ratio, Choice::label) { vm.ratio = it }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Variations", style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
@@ -90,8 +90,8 @@ fun StudioScreen(vm: StudioViewModel, onSettings: () -> Unit) {
             OutlinedTextField(
                 value = vm.extra,
                 onValueChange = { vm.extra = it },
-                label = { Text("Extra direction (optional)") },
-                placeholder = { Text("e.g. add autumn leaves, make it feel cozy, mention our Diwali sale") },
+                label = { Text("Caption context (optional)") },
+                placeholder = { Text("e.g. new arrivals, mention our Diwali sale") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
             )
@@ -169,12 +169,12 @@ private fun SourceCard(vm: StudioViewModel, pickPhoto: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun OptionRow(title: String, options: List<Choice>, selected: Choice, onSelect: (Choice) -> Unit) {
+private fun <T> OptionRow(title: String, options: List<T>, selected: T, label: (T) -> String, onSelect: (T) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(title, style = MaterialTheme.typography.labelLarge)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             itemsIndexed(options) { _, o ->
-                FilterChip(selected = o == selected, onClick = { onSelect(o) }, label = { Text(o.label) })
+                FilterChip(selected = o == selected, onClick = { onSelect(o) }, label = { Text(label(o)) })
             }
         }
     }

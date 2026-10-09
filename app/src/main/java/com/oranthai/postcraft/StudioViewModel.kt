@@ -28,7 +28,6 @@ class StudioViewModel(app: Application) : AndroidViewModel(app) {
 
     // Options
     var aesthetic by mutableStateOf(Styles.aesthetics.first())
-    var postType by mutableStateOf(Styles.postTypes.first())
     var tone by mutableStateOf(Styles.tones.first())
     var ratio by mutableStateOf(Styles.ratios.first())
     var variations by mutableStateOf(2)
@@ -69,32 +68,23 @@ class StudioViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun generate() {
-        val src = sourceJpeg ?: return run { message = "Pick a photo first." }
-        if (!hasKey) return run { message = "Add your Gemini API key in Settings." }
+        val src = sourceBitmap ?: return run { message = "Pick a photo first." }
         generating = true
         results.clear()
         selected = 0
-        val gemini = Gemini(prefs.geminiKey)
 
         viewModelScope.launch {
-            launch { captionFrom(gemini, src) }
-            val outcomes = withContext(Dispatchers.IO) {
+            if (hasKey) launch { captionFrom(Gemini(prefs.geminiKey), sourceJpeg!!) }
+            else message = "Images ready. Add a Gemini API key in Settings for AI captions."
+            val made = withContext(Dispatchers.Default) {
                 (0 until variations).map { i ->
                     async {
-                        runCatching {
-                            val raw = gemini.generateImage(prefs.imageModel, src, imagePrompt(i), ratio.prompt)
-                            Images.normalize(raw).let { (jpeg, bmp) -> Result(jpeg, bmp) }
-                        }
+                        val bmp = Filters.render(src, aesthetic, ratio.prompt, i)
+                        Result(Images.toJpeg(bmp, 95), bmp)
                     }
                 }.awaitAll()
             }
-            outcomes.forEach { o -> o.getOrNull()?.let { results.add(it) } }
-            val failures = outcomes.mapNotNull { it.exceptionOrNull() }
-            if (results.isEmpty() && failures.isNotEmpty()) {
-                message = failures.first().message ?: "Generation failed."
-            } else if (failures.isNotEmpty()) {
-                message = "${failures.size} of $variations variations failed: ${failures.first().message}"
-            }
+            results.addAll(made)
             generating = false
         }
     }
@@ -150,20 +140,9 @@ class StudioViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private fun imagePrompt(index: Int) = buildString {
-        appendLine("Transform this photo into a scroll-stopping Instagram post.")
-        appendLine("Aesthetic: ${aesthetic.prompt}.")
-        appendLine("Format: ${postType.prompt}")
-        appendLine("Keep the main subject and its identity clearly recognizable. Improve composition, lighting and color grading. Crisp high-resolution detail, no watermarks.")
-        if (extra.isNotBlank()) appendLine("Creator's direction: ${extra.trim()}")
-        if (prefs.brand.isNotBlank() && postType.label != "Photo") appendLine("This is for: ${prefs.brand}.")
-        if (index > 0) appendLine("This is alternative #${index + 1}: choose a noticeably different composition, framing or color interpretation.")
-        append("Return only the final image.")
-    }
-
     private fun captionPrompt() = buildString {
         appendLine("Write an Instagram caption for a post made from this photo.")
-        appendLine("Visual style: ${aesthetic.label}. Post format: ${postType.label}.")
+        appendLine("Visual style: ${aesthetic.label}.")
         appendLine("Tone: ${tone.prompt}.")
         if (prefs.brand.isNotBlank()) appendLine("Account: ${prefs.brand}. Write in its voice.")
         if (extra.isNotBlank()) appendLine("Context from the creator: ${extra.trim()}")
